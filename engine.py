@@ -1,7 +1,7 @@
 import asyncio
 import uuid
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from indicators import atr, bollinger, ema, macd, rsi
 from okx_client import OkxRestClient
@@ -43,7 +43,7 @@ class TradeEngine:
         self._profit_accumulated = 0.0
         self._lock = asyncio.Lock()
 
-    async def on_candle(self, candle: Dict[str, float], state: Dict[str, list[float]]) -> None:
+    async def on_candle(self, candle: Dict[str, float], state: Dict[str, List[float]]) -> None:
         async with self._lock:
             closes = state["closes"]
             highs = state["highs"]
@@ -56,7 +56,7 @@ class TradeEngine:
             elif self._position is not None:
                 await self._manage_position(candle["close"], closes, highs, lows)
 
-    async def _open_position(self, signal: Signal, closes: list[float], highs: list[float], lows: list[float]) -> None:
+    async def _open_position(self, signal: Signal, closes: List[float], highs: List[float], lows: List[float]) -> None:
         atr_val = atr(highs, lows, closes, 14)
         if atr_val is None:
             return
@@ -90,7 +90,7 @@ class TradeEngine:
             sl_price=entry_price * (1 - plan.sl_pct / 100),
         )
 
-    async def _manage_position(self, current_price: float, closes: list[float], highs: list[float], lows: list[float]) -> None:
+    async def _manage_position(self, current_price: float, closes: List[float], highs: List[float], lows: List[float]) -> None:
         position = self._position
         if position is None:
             return

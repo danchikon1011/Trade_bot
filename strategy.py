@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from indicators import atr, bollinger, ema, macd, momentum, rsi, sma, trend_strength
 
@@ -29,10 +29,10 @@ class PositionPlan:
 
 
 def evaluate_signal(
-    closes: list[float],
-    highs: list[float],
-    lows: list[float],
-    volumes: list[float],
+    closes: List[float],
+    highs: List[float],
+    lows: List[float],
+    volumes: List[float],
 ) -> Optional[Signal]:
     sma_fast = sma(closes, 50)
     sma_slow = sma(closes, 200)
